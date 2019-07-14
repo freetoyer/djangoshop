@@ -14,7 +14,7 @@ class Category(models.Model):
 
 def pre_save_category_slug(sender, instance, *args, **kwargs):
     if not instance.slug:
-        slug = slugify(translit(str(instance.name), reversed=True))
+        slug = slugify(translit(instance.name, reversed=True))
         instance.slug = slug
 
 pre_save.connect(pre_save_category_slug, sender=Category)
