@@ -13,8 +13,10 @@ def base_view(request):
 
 def product_view(request, product_slug):
     product = Product.objects.get(slug=product_slug)
+    categories = Category.objects.all()
     context = {
-        'product': product
+        'product': product,
+        'categories': categories
     }
     return render(request, 'product.html', context)
 
