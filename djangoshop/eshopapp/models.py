@@ -63,8 +63,8 @@ class Product(models.Model):
 
 class CartItem(models.Model):
 
-    product = models.ForeignKey(Product)
-    qty = models.PositiveInteger(default=1)
+    product = models.ForeignKey(Product, blank=True)
+    qty = models.PositiveIntegerField(default=1)
     item_total = models.DecimalField(max_digits=9, decimal_places=2, default=0.00)
 
     def __str__(self):
