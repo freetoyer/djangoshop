@@ -1,11 +1,20 @@
 from django.shortcuts import render
 from eshopapp.models import Category, Product, CartItem, Cart
+from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 
 def base_view(request):
     categories = Category.objects.all()
     products = Product.objects.all()
-    cart = Cart.objects.first()
+    try:
+        cart_id = request.session['cart_id']
+        cart = Cart.objects.get(id=cart_id)
+        request.session['total'] = cart.items.count()
+    except:
+        cart = Cart.objects.create()
+        cart_id = cart.id
+        request.session['cart_id'] = cart_id
+        cart = Cart.objects.get(id=cart_id)
     context = {
             'categories': categories,
             'products': products,
@@ -17,7 +26,15 @@ def base_view(request):
 def product_view(request, product_slug):
     product = Product.objects.get(slug=product_slug)
     categories = Category.objects.all()
-    cart = Cart.objects.first()
+    try:
+        cart_id = request.session['cart_id']
+        cart = Cart.objects.get(id=cart_id)
+        request.session['total'] = cart.items.count()
+    except:
+        cart = Cart.objects.create()
+        cart_id = cart.id
+        request.session['cart_id'] = cart_id
+        cart = Cart.objects.get(id=cart_id)
     context = {
         'product': product,
         'categories': categories,
@@ -39,7 +56,15 @@ def category_view(request, category_slug):
 
 
 def cart_view(request):
-    cart = Cart.objects.first()
+    try:
+        cart_id = request.session['cart_id']
+        cart = Cart.objects.get(id=cart_id)
+        request.session['total'] = cart.items.count()
+    except:
+        cart = Cart.objects.create()
+        cart_id = cart.id
+        request.session['cart_id'] = cart_id
+        cart = Cart.objects.get(id=cart_id)
     context = {
         'cart': cart
     }
@@ -47,11 +72,27 @@ def cart_view(request):
 
 
 def add_to_cart_view(request, product_slug):
-    product = Product.objects.get(slug=product_slug)
-    new_item, _ = CartItem.objects.get_or_create(product=product, item_total=product.price)
-    cart = Cart.objects.first()
-    if new_item not in cart.items.all():
-        cart.items.add(new_item)
-        cart.save()
-        return HttpResponseRedirect('/cart/') 
+    try:
+        cart_id = request.session['cart_id']
+        cart = Cart.objects.get(id=cart_id)
+        request.session['total'] = cart.items.count()
+    except:
+        cart = Cart.objects.create()
+        cart_id = cart.id
+        request.session['cart_id'] = cart_id
+        cart = Cart.objects.get(id=cart_id)
+    cart.add_to_cart(product_slug=product_slug)
+    return HttpResponseRedirect(reverse('cart')) 
 
+def remove_from_cart_view(request, product_slug):
+    try:
+        cart_id = request.session['cart_id']
+        cart = Cart.objects.get(id=cart_id)
+        request.session['total'] = cart.items.count()
+    except:
+        cart = Cart.objects.create()
+        cart_id = cart.id
+        request.session['cart_id'] = cart_id
+        cart = Cart.objects.get(id=cart_id)
+    cart.remove_from_cart(product_slug=product_slug)
+    return HttpResponseRedirect('/cart/')
