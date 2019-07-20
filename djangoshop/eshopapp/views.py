@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from eshopapp.models import Category, Product, CartItem, Cart
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 
 def base_view(request):
     categories = Category.objects.all()
@@ -71,7 +71,7 @@ def cart_view(request):
     return render(request, 'cart.html', context)
 
 
-def add_to_cart_view(request, product_slug):
+def add_to_cart_view(request):
     try:
         cart_id = request.session['cart_id']
         cart = Cart.objects.get(id=cart_id)
@@ -81,10 +81,11 @@ def add_to_cart_view(request, product_slug):
         cart_id = cart.id
         request.session['cart_id'] = cart_id
         cart = Cart.objects.get(id=cart_id)
-    cart.add_to_cart(product_slug=product_slug)
-    return HttpResponseRedirect(reverse('cart')) 
+    product_slug = request.GET.get('product_slug')
+    cart.add_to_cart(product_slug)
+    return JsonResponse({'cart_total': cart.items.count()})
 
-def remove_from_cart_view(request, product_slug):
+def remove_from_cart_view(request):
     try:
         cart_id = request.session['cart_id']
         cart = Cart.objects.get(id=cart_id)
@@ -94,5 +95,6 @@ def remove_from_cart_view(request, product_slug):
         cart_id = cart.id
         request.session['cart_id'] = cart_id
         cart = Cart.objects.get(id=cart_id)
-    cart.remove_from_cart(product_slug=product_slug)
-    return HttpResponseRedirect('/cart/')
+    product_slug = request.GET.get('product_slug')
+    cart.remove_from_cart(product_slug)
+    return JsonResponse({'cart_total': cart.items.count()})

@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block content %}
 
 <h3 class='text-center'>Ваша корзина</h3>
@@ -22,7 +22,7 @@
 		</form>
 	</td>
 	<td class='text-center' id='cart-item-total-{{ item.id }}'>{{ item.item_total }} руб.</td>
-	<td class='text-center'><a href='{% url 'remove_from_cart' product_slug=item.product.slug %}' class='remove_from_cart' data-slug='{{ item.product.slug }}' data-id='{{ item.product.id }}'><button class='btn btn-default'>Удалить из корзины</button></a></td>
+	<td class='text-center'><a href='#' class='remove_from_cart' data-slug='{{ item.product.slug }}' data-id='{{ item.product.id }}'><button class='btn btn-default'>Удалить из корзины</button></a></td>
 </tr>
 {% endfor %}
 <tr>
@@ -34,4 +34,26 @@
 {% endif %}
 </table>
 
+<script src='{% static "js/jquery.js" %}'></script>
+<script>
+$(document).ready(function(){
+	$('.remove_from_cart').on('click', function(e){
+		e.preventDefault()
+		product_slug = $(this).attr('data-slug')
+        item_product_id = $(this).attr('data-id')
+		data = {
+			product_slug: product_slug
+		}
+		$.ajax({
+			type: "GET",
+			url: '{% url "remove_from_cart" %}',
+			data: data,
+			success: function(data){
+				$("#cart_count").html(data.cart_total)
+                $(".cart-item-"+item_product_id).css('display', 'none')
+			}
+		})
+	})
+})
+</script>
 {% endblock content %}
