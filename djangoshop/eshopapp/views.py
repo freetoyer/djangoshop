@@ -136,3 +136,18 @@ def change_item_qty_view(request):
         'cart_total_price': cart.cart_total
     })
 
+
+def checkout_view(request):
+    try:
+        cart_id = request.session['cart_id']
+        cart = Cart.objects.get(id=cart_id)
+        request.session['total'] = cart.items.count()
+    except:
+        cart = Cart.objects.create()
+        cart_id = cart.id
+        request.session['cart_id'] = cart_id
+        cart = Cart.objects.get(id=cart_id)
+    context = {
+        'cart': cart
+    }
+    return render(request, 'checkout.html', context)
