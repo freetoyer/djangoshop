@@ -2,7 +2,6 @@ from django.shortcuts import render
 from eshopapp.models import Category, Product, CartItem, Cart
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, JsonResponse
-from decimal import Decimal
 
 def base_view(request):
     categories = Category.objects.all()
@@ -129,15 +128,8 @@ def change_item_qty_view(request):
         cart = Cart.objects.get(id=cart_id)
     qty = request.GET.get('qty')
     item_id = request.GET.get('item_id')
+    cart.change_qty(qty, item_id)
     cart_item = CartItem.objects.get(id=int(item_id))
-    cart_item.qty = int(qty)
-    cart_item.item_total = cart_item.qty * Decimal(cart_item.product.price)
-    cart_item.save()
-    new_cart_total = 0.00
-    for item in cart.items.all():
-        new_cart_total += float(item.item_total)
-    cart.cart_total = new_cart_total
-    cart.save()
     return JsonResponse({
         'cart_total': cart.items.count(),
         'item_total': cart_item.item_total,
