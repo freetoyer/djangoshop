@@ -2,6 +2,8 @@ from django.shortcuts import render
 from eshopapp.models import Category, Product, CartItem, Cart
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, JsonResponse
+from eshopapp.forms import OrderForm
+
 
 def base_view(request):
     categories = Category.objects.all()
@@ -151,3 +153,20 @@ def checkout_view(request):
         'cart': cart
     }
     return render(request, 'checkout.html', context)
+
+
+def order_create_view(request):
+    try:
+        cart_id = request.session['cart_id']
+        cart = Cart.objects.get(id=cart_id)
+        request.session['total'] = cart.items.count()
+    except:
+        cart = Cart.objects.create()
+        cart_id = cart.id
+        request.session['cart_id'] = cart_id
+        cart = Cart.objects.get(id=cart_id)
+    form = OrderForm(request.POST or None)
+    context = {
+        'form': form
+    }
+    return render(request, 'order.html', context)
