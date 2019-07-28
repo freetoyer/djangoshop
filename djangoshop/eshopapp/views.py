@@ -212,3 +212,11 @@ def make_order_view(request):
         'categories': categories
     }
     return render(request, 'order.html', context)
+
+
+def account_view(request):
+    order = Order.objects.filter(user=request.user).order_by('-id')
+    context = {
+        'order': order
+    }
+    return render(request, 'account.html', context)

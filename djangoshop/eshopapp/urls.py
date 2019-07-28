@@ -10,7 +10,8 @@ from eshopapp.views import (
         change_item_qty_view, 
         checkout_view,
         order_create_view,
-        make_order_view
+        make_order_view,
+        account_view
         )
 
 urlpatterns = [
@@ -24,6 +25,7 @@ urlpatterns = [
     url(r'^order/$', order_create_view, name='create_order'),
     url(r'^make_order/$', make_order_view, name='make_order'),
     url(r'^thank_you/$', TemplateView.as_view(template_name='thank_you.html'), name='thank_you'),
+    url(r'^account/$', account_view, name='account'),
     url(r'^$', base_view, name='base'),
 ]
 
