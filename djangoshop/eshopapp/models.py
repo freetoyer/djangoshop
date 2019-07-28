@@ -118,19 +118,20 @@ ORDER_STATUS_CHOICES = (
 
 class Order(models.Model):
 
-	user = models.ForeignKey(settings.AUTH_USER_MODEL)
-	items = models.ForeignKey(Cart)
-	total = models.DecimalField(max_digits=9, decimal_places=2, default=0.00)
-	first_name = models.CharField(max_length=200)
-	last_name = models.CharField(max_length=200)
-	phone = models.CharField(max_length=20)
-	address = models.CharField(max_length=255)
-	buying_type = models.CharField(max_length=40, choices=(('Самовывоз', 'Самовывоз'), 
-		('Доставка', 'Доставка')), default='Самовывоз')
-	date = models.DateTimeField(auto_now_add=True)
-	comments = models.TextField()
-	status = models.CharField(max_length=100, choices=ORDER_STATUS_CHOICES, default=ORDER_STATUS_CHOICES[0][0])
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    items = models.ForeignKey(Cart)
+    total = models.DecimalField(max_digits=9, decimal_places=2, default=0.00)
+    first_name = models.CharField(max_length=200)
+    last_name = models.CharField(max_length=200)
+    phone = models.CharField(max_length=20)
+    address = models.CharField(max_length=255)
+    buying_type = models.CharField(max_length=40, choices=(('Самовывоз', 'Самовывоз'), 
+            ('Доставка', 'Доставка')), default='Самовывоз')
+    date = models.DateTimeField(auto_now_add=True)
+    delivery_date = models.DateTimeField(auto_now_add=True)
+    comments = models.TextField()
+    status = models.CharField(max_length=100, choices=ORDER_STATUS_CHOICES, default=ORDER_STATUS_CHOICES[0][0])
 
-	def __str__(self):
-		return "Заказ №{0}".format(str(self.id))
+    def __str__(self):
+        return "Заказ №{0}".format(str(self.id))
 

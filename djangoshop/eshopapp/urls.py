@@ -1,4 +1,5 @@
 from django.conf.urls import url
+from django.views.generic import TemplateView
 from eshopapp.views import (
         base_view, 
         category_view, 
@@ -8,7 +9,8 @@ from eshopapp.views import (
         remove_from_cart_view, 
         change_item_qty_view, 
         checkout_view,
-        order_create_view
+        order_create_view,
+        make_order_view
         )
 
 urlpatterns = [
@@ -20,6 +22,8 @@ urlpatterns = [
     url(r'^cart/$', cart_view, name='cart'),
     url(r'^checkout/$', checkout_view, name='checkout'),
     url(r'^order/$', order_create_view, name='create_order'),
+    url(r'^make_order/$', make_order_view, name='make_order'),
+    url(r'^thank_you/$', TemplateView.as_view(template_name='thank_you.html'), name='thank_you'),
     url(r'^$', base_view, name='base'),
 ]
 

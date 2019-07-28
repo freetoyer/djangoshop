@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from eshopapp.models import Category, Product, CartItem, Cart
+from eshopapp.models import Category, Product, CartItem, Cart, Order
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, JsonResponse
 from eshopapp.forms import OrderForm
@@ -168,5 +168,47 @@ def order_create_view(request):
     form = OrderForm(request.POST or None)
     context = {
         'form': form
+    }
+    return render(request, 'order.html', context)
+
+
+def make_order_view(request):
+    try:
+        cart_id = request.session['cart_id']
+        cart = Cart.objects.get(id=cart_id)
+        request.session['total'] = cart.items.count()
+    except:
+        cart = Cart.objects.create()
+        cart_id = cart.id
+        request.session['cart_id'] = cart_id
+        cart = Cart.objects.get(id=cart_id)
+    form = OrderForm(request.POST or None)
+    categories = Category.objects.all()
+    if form.is_valid():
+        name = form.cleaned_data['name']
+        last_name = form.cleaned_data['last_name']
+        phone = form.cleaned_data['phone']
+        buying_type = form.cleaned_data['buying_type']
+        address = form.cleaned_data['address']
+        delivery_date = form.cleaned_data['delivery_date']
+        comments = form.cleaned_data['comments']
+        new_order = Order.objects.create(
+            user=request.user,
+            items=cart,
+            total=cart.cart_total,
+            first_name=name,
+            last_name=last_name,
+            phone=phone,
+            address=address,
+            delivery_date=delivery_date,
+            buying_type=buying_type,
+            comments=comments
+        )
+        del request.session['cart_id']
+        del request.session['total']
+        return HttpResponseRedirect(reverse('thank_you'))
+    context = {
+        'form': form,
+        'categories': categories
     }
     return render(request, 'order.html', context)
