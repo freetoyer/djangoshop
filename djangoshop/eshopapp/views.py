@@ -2,7 +2,7 @@ from django.shortcuts import render
 from eshopapp.models import Category, Product, CartItem, Cart, Order
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, JsonResponse
-from eshopapp.forms import OrderForm
+from eshopapp.forms import OrderForm, RegistrationForm
 
 
 def base_view(request):
@@ -220,3 +220,13 @@ def account_view(request):
         'order': order
     }
     return render(request, 'account.html', context)
+
+
+def registration_view(request):
+    form = RegistrationForm(request.POST or None)
+    if form.is_valid():
+        return HttpResponseRedirect(reverse('base'))
+    context = { 
+        'form': form
+    }
+    return render(request, 'registration.html', context)

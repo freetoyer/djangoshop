@@ -52,7 +52,7 @@
 							{% for category in categories %}
 							<li><a href="{{ category.get_absolute_url }}">{{ category.name }}</a></li>
 							{% endfor %}
-					  </ul>
+     					</ul>
 					</li>
                     {% endif %}
                     {% if not request.user.is_authenticated %}
@@ -137,11 +137,9 @@
                             <div class="caption">
 								<h5 class="pull-right">{{ product.price }} руб.</h5>
 								<h6><strong><a href={{ product.get_absolute_url }}>{{ product }}</a></strong></h6>
-								<p>{{ product.description }}</p>
-                                
+                                <br>
 								{% if request.user.is_authenticated %}<p class='text-center'><a href='#' class='add_to_cart' data-slug='{{ product.slug }}'><button class='btn btn-danger'>Добавить в корзину</button></a></p>{% endif %}
-								<br><br>
-								{% if not request.user.is_authenticated %}<p class='text-center'>Заказывать товар могут только авторизированные пользователи. Пожалуйста, <a href='#'>войдите</a> или <a href='#'>зарегистрируйтесь</a></p>{% endif %}
+                                {% if not request.user.is_authenticated %}<p class='text-justify'>Заказывать товар могут только авторизированные пользователи. Пожалуйста, <a href='#'>войдите</a> или <a href='{% url 'registration' %}'>зарегистрируйтесь</a></p>{% endif %}
                             </div>
                         </div>
                     </div>
