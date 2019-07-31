@@ -68,8 +68,10 @@ def cart_view(request):
         cart_id = cart.id
         request.session['cart_id'] = cart_id
         cart = Cart.objects.get(id=cart_id)
+    categories = Category.objects.all()
     context = {
-        'cart': cart
+        'cart': cart,
+        'categories': categories
     }
     return render(request, 'cart.html', context)
 
@@ -150,8 +152,10 @@ def checkout_view(request):
         cart_id = cart.id
         request.session['cart_id'] = cart_id
         cart = Cart.objects.get(id=cart_id)
+    categories = Category.objects.all()
     context = {
-        'cart': cart
+        'cart': cart,
+        'categories': categories
     }
     return render(request, 'checkout.html', context)
 
@@ -166,9 +170,11 @@ def order_create_view(request):
         cart_id = cart.id
         request.session['cart_id'] = cart_id
         cart = Cart.objects.get(id=cart_id)
+    categories = Category.objects.all()
     form = OrderForm(request.POST or None)
     context = {
-        'form': form
+        'form': form,
+        'categories': categories
     }
     return render(request, 'order.html', context)
 
@@ -217,8 +223,10 @@ def make_order_view(request):
 
 def account_view(request):
     order = Order.objects.filter(user=request.user).order_by('-id')
+    categories = Category.objects.all()
     context = {
-        'order': order
+        'order': order,
+        'categories': categories
     }
     return render(request, 'account.html', context)
 
@@ -242,8 +250,10 @@ def registration_view(request):
         if login_user:
             login(request, login_user)
             return HttpResponseRedirect(reverse('base'))
+    categories = Category.objects.all()
     context = { 
-        'form': form
+        'form': form,
+        'categories': categories
     }
     return render(request, 'registration.html', context)
 
@@ -257,7 +267,9 @@ def login_view(request):
         if login_user:
             login(request, login_user)
             return HttpResponseRedirect(reverse('base'))
+    categories = Category.objects.all()
     context = {
-        'form': form
+        'form': form,
+        'categories': categories
     }
     return render(request, 'login.html', context)
