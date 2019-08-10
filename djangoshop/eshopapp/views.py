@@ -222,10 +222,10 @@ def make_order_view(request):
 
 
 def account_view(request):
-    order = Order.objects.filter(user=request.user).order_by('-id')
+    orders = Order.objects.filter(user=request.user).order_by('-id')
     categories = Category.objects.all()
     context = {
-        'order': order,
+        'orders': orders,
         'categories': categories
     }
     return render(request, 'account.html', context)

@@ -9,6 +9,7 @@ make_paid.short_description = "Пометить как оплаченные"
 class OrderAdmin(admin.ModelAdmin):
     list_filter = ['status']
     actions = [make_paid]
+    readonly_fields = ('user', 'items', 'total',)
 
 admin.site.register(Category)
 admin.site.register(Brand)

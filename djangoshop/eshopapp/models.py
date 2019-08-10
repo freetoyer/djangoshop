@@ -84,7 +84,7 @@ class Cart(models.Model):
     def add_to_cart(self, product_slug):
         cart = self
         product = Product.objects.get(slug=product_slug)
-        new_item, _ = CartItem.objects.get_or_create(product=product, item_total=product.price)
+        new_item = CartItem.objects.create(product=product, item_total=product.price)
         if new_item not in cart.items.all():
             cart.items.add(new_item)
             cart.save()
@@ -119,7 +119,7 @@ ORDER_STATUS_CHOICES = (
 class Order(models.Model):
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
-    items = models.ForeignKey(Cart)
+    items = models.OneToOneField(Cart)
     total = models.DecimalField(max_digits=9, decimal_places=2, default=0.00)
     first_name = models.CharField(max_length=200)
     last_name = models.CharField(max_length=200)
@@ -128,7 +128,7 @@ class Order(models.Model):
     buying_type = models.CharField(max_length=40, choices=(('Самовывоз', 'Самовывоз'), 
             ('Доставка', 'Доставка')), default='Самовывоз')
     date = models.DateTimeField(auto_now_add=True)
-    delivery_date = models.DateTimeField(auto_now_add=True)
+    delivery_date = models.DateField()
     comments = models.TextField()
     status = models.CharField(max_length=100, choices=ORDER_STATUS_CHOICES, default=ORDER_STATUS_CHOICES[0][0])
 
