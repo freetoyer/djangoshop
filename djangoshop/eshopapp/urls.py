@@ -15,7 +15,9 @@ from eshopapp.views import (
         make_order_view,
         account_view,
         registration_view,
-        login_view
+        login_view,
+        notify_create,
+        notify_delete
         )
 
 urlpatterns = [
@@ -33,6 +35,8 @@ urlpatterns = [
     url(r'^registration/$', registration_view, name='registration'),
     url(r'^login/$', login_view, name='login'),
     url(r'^logout/$', LogoutView.as_view(next_page=reverse_lazy('base')), name='logout'),
+    url(r'^notify_create/$', notify_create, name='notify_create'),
+    url(r'^notify_delete/$', notify_delete, name='notify_delete'),
     url(r'^$', base_view, name='base'),
 ]
 

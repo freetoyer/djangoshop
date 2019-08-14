@@ -1,5 +1,5 @@
 from django.contrib import admin
-from eshopapp.models import Category, Brand, Product, CartItem, Cart, Order
+from eshopapp.models import Category, Brand, Product, CartItem, Cart, Order, MiddlwareNotification
 
 
 def make_paid(modeladmin, request, queryset):
@@ -17,4 +17,4 @@ admin.site.register(Product)
 admin.site.register(CartItem)
 admin.site.register(Cart)
 admin.site.register(Order, OrderAdmin)
-
+admin.site.register(MiddlwareNotification)

@@ -2,8 +2,9 @@ from django.shortcuts import render
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth import login, authenticate
-from eshopapp.models import Category, Product, CartItem, Cart, Order
+from eshopapp.models import Category, Product, CartItem, Cart, Order, MiddlwareNotification
 from eshopapp.forms import OrderForm, RegistrationForm, LoginForm
+from notifications.models import Notification
 
 
 def base_view(request):
@@ -27,8 +28,6 @@ def base_view(request):
 
 
 def product_view(request, product_slug):
-    product = Product.objects.get(slug=product_slug)
-    categories = Category.objects.all()
     try:
         cart_id = request.session['cart_id']
         cart = Cart.objects.get(id=cart_id)
@@ -38,10 +37,17 @@ def product_view(request, product_slug):
         cart_id = cart.id
         request.session['cart_id'] = cart_id
         cart = Cart.objects.get(id=cart_id)
+    product = Product.objects.get(slug=product_slug)
+    categories = Category.objects.all()
+    check_for_subscribe = [notification.product for notification in MiddlwareNotification.objects.filter(
+        user_name = request.user,
+        product = product
+        )]
     context = {
         'product': product,
         'categories': categories,
-        'cart': cart
+        'cart': cart,
+        'check_for_subscribe': check_for_subscribe
     }
     return render(request, 'product.html', context)
 
@@ -273,3 +279,19 @@ def login_view(request):
         'categories': categories
     }
     return render(request, 'login.html', context)
+
+
+def notify_create(request):
+    product_slug = request.GET.get('product_slug')
+    new_notification = MiddlwareNotification.objects.create(
+            user_name = request.user,
+            product = Product.objects.get(slug=product_slug)
+            )
+    return JsonResponse({'created': 'Вы подписались на уведомления о поступлении. Как только товар появится, мы Вам сообщим'})
+
+
+def notify_delete(request):
+    slug = request.GET.get('slug')
+    notification_on_delete = Notification.objects.get(recipient=request.user, description=slug)
+    notification_on_delete.delete()
+    return JsonResponse({'ok': 'ok'})
